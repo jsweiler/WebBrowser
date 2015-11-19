@@ -1,0 +1,40 @@
+﻿<Window x:Class="WebBrowserTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WebBrowserTest"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="350" Width="525">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Auth Key"/>
+            <TextBox Text="{Binding AuthKey}" Margin="10,1,0,1"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="XWeb Id"/>
+            <TextBox Text="{Binding XWebId}" Margin="10,1,0,1"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Terminal Id"/>
+            <TextBox Text="{Binding TerminalId}" Margin="10,1,0,1"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Industry"/>
+            <TextBox Text="{Binding Industry}" Margin="10,1,0,1"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Amount"/>
+            <TextBox Text="{Binding Amount}" Margin="10,1,0,1"/>
+        </StackPanel>
+        
+        <Button Command="{Binding Charge}" Content="Charge"/>
+        
+        <WebBrowser local:WebBrowserBehavior.BindableSource="{Binding Source}"
+                    local:WebBrowserBehavior.DisableJavascriptErrors="True"/>
+    </StackPanel>   
+</Window>
