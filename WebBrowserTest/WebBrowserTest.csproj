@@ -78,6 +78,7 @@
     </ApplicationDefinition>
     <Compile Include="CreditCharger.cs" />
     <Compile Include="MainViewModel.cs" />
+    <Compile Include="UrlSplitter.cs" />
     <Compile Include="WebBrowserBehaviour.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

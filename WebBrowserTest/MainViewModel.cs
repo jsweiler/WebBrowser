@@ -63,6 +63,13 @@ namespace WebBrowserTest
             set { Set(ref source, value); }
         }
 
+        private string message;
+        public string Message
+        {
+            get { return message; }
+            set { Set(ref message, value); }
+        }
+
         private ICommand charge;
         public ICommand Charge
         {

@@ -30,18 +30,19 @@ namespace WebBrowserTest
         public string GetSource(MainViewModel vm)
         {
             Otk = "";
-            var gatewayResponse = GetOtk(vm.Amount, vm);
-            if (string.IsNullOrWhiteSpace(gatewayResponse))
+            var gatewayResponse = GetOtk(vm);
+            if (string.IsNullOrWhiteSpace(gatewayResponse.OTK))
             {
+                vm.Message = gatewayResponse.ResponseDescription;
                 return null;
             }
-            Otk = gatewayResponse;
+            Otk = gatewayResponse.OTK;
             var hpf = GetHpf(Otk);
             return hpf;
 
         }
 
-        private string GetOtk(decimal amount, MainViewModel vm)
+        private CardResponse GetOtk(MainViewModel vm)
         {
             var dictionary = new Dictionary<string, string>
             {
@@ -52,7 +53,7 @@ namespace WebBrowserTest
                 {"TransactionType", "CreditSaleTransaction"},
                 {"CreateAlias", "TRUE"},
                 {"DuplicateMode", "CHECKING_OFF"},
-                {"Amount", Math.Abs(amount).ToString(CultureInfo.CurrentCulture)},
+                {"Amount", Math.Abs(vm.Amount).ToString(CultureInfo.CurrentCulture)},
                 {"AmountLocked", "TRUE"},
                 {"DeviceType", "EMV"},
 
@@ -69,28 +70,21 @@ namespace WebBrowserTest
             try
             {
                 var client = new WebClient();
-                using (var r = client.OpenRead(fullUrl))
-                using (var sr = new StreamReader(r))
-                {
-                    var result = sr.ReadToEnd();
-                    var splits = result.Split('&');
-                    foreach (var item in splits)
-                    {
-                        var name = item.Substring(0, item.IndexOf('='));
-                        if (name == "OTK")
-                        {
-                            var equalIndex = item.IndexOf('=');
-                            var value = item.Substring(equalIndex + 1, item.Length - equalIndex - 1);
-                            return value;
-                        }
-                    }
-                }
+                var result = client.DownloadString(fullUrl);
+
+                var cardResponse = new CardResponse();
+
+                var splitter = new UrlSplitter(result);
+                cardResponse.OTK = (string) splitter.Query(nameof(cardResponse.OTK));
+                cardResponse.ResponseCode = (string) splitter.Query(nameof(cardResponse.ResponseCode));
+                cardResponse.ResponseDescription = (string) splitter.Query(nameof(cardResponse.ResponseDescription));
+                return cardResponse;
             }
             catch (Exception e)
             {
-                throw;
+                vm.Message = e.Message;
+                return null;
             }
-            return null;
         }
 
         private string GetHpf(string otk)
@@ -100,6 +94,14 @@ namespace WebBrowserTest
             return baseUrl;
         }
 
+    }
+
+
+    public class CardResponse
+    {
+        public string OTK { get; set; }
+        public string ResponseCode { get; set; }
+        public string ResponseDescription { get; set; }
     }
 
 }
